@@ -6,6 +6,9 @@ To install and configure Hadoop HDFS on Ubuntu 24.04, follow these steps:
 
 #### 1. Log in to Ubuntu Server
 
+- Username: `admin`
+- Password: `admin`
+
 ```bash
 ssh admin@<virtual_machine_ip>
 ## Enter password when prompted
