@@ -27,11 +27,11 @@ sudo usermod -aG sudo hduser
 su - hduser
 ```
 
-#### 3. Install Java (OpenJDK 17)
+#### 3. Install Java (OpenJDK 11)
 
 ```bash
 sudo apt update
-sudo apt install openjdk-17-jdk -y
+sudo apt install openjdk-11-jdk -y
 java -version
 ```
 
@@ -41,7 +41,7 @@ java -version
 readlink -f $(which java)
 ```
 
-This command should return `/usr/lib/jvm/java-17-openjdk-amd64/bin/java`.
+This command should return `/usr/lib/jvm/java-11-openjdk-amd64/bin/java`.
 
 #### 5. Download and Extract Hadoop
 
@@ -72,7 +72,7 @@ export HADOOP_HDFS_HOME=$HADOOP_HOME
 export YARN_HOME=$HADOOP_HOME
 export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
 export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 ```
 
 Exit the editor (`Ctrl` + `X` + `Enter` + `Enter`) and apply changes:
@@ -98,7 +98,7 @@ nano hadoop-env.sh
 Add the following content:
 
 ```bash
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 ```
 
 Exit the editor (`Ctrl` + `X` + `Enter` + `Enter`).
@@ -196,6 +196,7 @@ You should see:
 - `NameNode`
 - `DataNode`
 - `SecondaryNameNode`
+- `Jps`
 
 #### 12. Access Hadoop Web UI
 
