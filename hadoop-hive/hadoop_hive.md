@@ -91,6 +91,18 @@ Add the following content
             <value>/user/hive/warehouse</value>
             <description>location of default database for the warehouse</description>
         </property>
+        <property>
+                <name>hive.server2.enable.doAs</name>
+                <value>false</value>
+        </property>
+        <property>
+                <name>hive.server2.thrift.bind.host</name>
+                <value>localhost</value>
+        </property>
+        <property>
+                <name>hive.server2.thrift.port</name>
+                <value>10000</value>
+        </property>
     </configuration>
 
 Save and exit by hitting `Ctrl` + `X` + `Y` + `Enter` + `Enter`
@@ -107,6 +119,103 @@ Initialize the Metastore
     schematool -dbType derby -initSchema --verbose
 
 This command initializes the Derby database for Hive. You might see some warnings, but as long as it finishes with "Schema initialization completed", you're good.
+
+Start HiveServer2
+
+The most common way to start HiveServer2 is using the `hiveserver2` command. But starting and stopping the services will be difficult. So, we will create `start-hiveserver2.sh` and `stop-hiveserver2.sh` scripts to manage service.
+
+Create `start-hiveserver2.sh` file
+
+    ## Switch to Hive installation path
+    cd ~/hive/bin
+
+    ## Create file
+    nano start-hiveserver2.sh
+
+This script will start HiveServer2 in the background using nohup (to allow it to run even after you close your terminal) and redirect its output to a log file.
+
+    #!/bin/bash
+
+    # Define HIVE_HOME if not already set in your environment
+    export HIVE_HOME=${HIVE_HOME:-/home/hduser/hive} 
+
+    # Define a log directory for HiveServer2
+    HIVESERVER2_LOG_DIR="$HIVE_HOME/logs"
+    HIVESERVER2_LOG_FILE="$HIVESERVER2_LOG_DIR/hiveserver2.log"
+    HIVESERVER2_PID_FILE="$HIVESERVER2_LOG_DIR/hiveserver2.pid" # Optional: to store PID for easier stopping
+
+    # Create the log directory if it doesn't exist
+    mkdir -p "$HIVESERVER2_LOG_DIR"
+
+    echo "Starting HiveServer2..."
+
+    # Check if HiveServer2 is already running
+    if [ -f "$HIVESERVER2_PID_FILE" ]; then
+        PID=$(cat "$HIVESERVER2_PID_FILE")
+        if ps -p "$PID" > /dev/null; then
+            echo "HiveServer2 (PID $PID) is already running."
+            exit 0
+        else
+            echo "Stale PID file found. Removing it."
+            rm -f "$HIVESERVER2_PID_FILE"
+        fi
+    fi
+
+    # Start HiveServer2 in the background using nohup
+    # hive --service hiveserver2 is a common way to invoke it for older Hive versions
+    # For newer versions (Hive 1.2+), simply `hiveserver2` command is preferred.
+    # Append output to the log file
+    nohup "$HIVE_HOME"/bin/hiveserver2 >> "$HIVESERVER2_LOG_FILE" 2>&1 &
+    echo $! > "$HIVESERVER2_PID_FILE" # Store the PID of the background process
+
+    echo "HiveServer2 started. Check logs at: $HIVESERVER2_LOG_FILE"
+    echo "You can check its status using: jps"
+
+Create `stop-hiveserver2.sh` file
+
+This script will attempt to stop HiveServer2 gracefully using the PID file created by the start script.
+
+    #!/bin/bash
+
+    # Define HIVE_HOME (must match the start script)
+    export HIVE_HOME=${HIVE_HOME:-/home/hduser/hive} 
+
+    HIVESERVER2_LOG_DIR="$HIVE_HOME/logs"
+    HIVESERVER2_PID_FILE="$HIVESERVER2_LOG_DIR/hiveserver2.pid"
+
+    echo "Stopping HiveServer2..."
+
+    if [ -f "$HIVESERVER2_PID_FILE" ]; then
+        PID=$(cat "$HIVESERVER2_PID_FILE")
+        if ps -p "$PID" > /dev/null; then
+            echo "Killing HiveServer2 process (PID: $PID)..."
+            kill "$PID"
+            # Wait a bit for the process to terminate
+            sleep 5
+            if ps -p "$PID" > /dev/null; then
+                echo "HiveServer2 (PID: $PID) did not terminate gracefully. Forcing kill."
+                kill -9 "$PID" # Force kill if it's still running
+            fi
+            rm -f "$HIVESERVER2_PID_FILE"
+            echo "HiveServer2 stopped."
+        else
+            echo "HiveServer2 is not running (PID file exists but process not found)."
+            rm -f "$HIVESERVER2_PID_FILE"
+        fi
+    else
+        echo "HiveServer2 PID file not found. Is it running?"
+    fi
+
+Make them executable
+
+    chmod +x start-hiveserver2.sh
+    chmod +x stop-hiveserver2.sh
+
+After running start-hiveserver2.sh, you can verify it's running using:
+
+- jps (look for a RunJar process which is typically HiveServer2)
+- sudo netstat -plnt | grep 10000 (should now show a process listening on 10000)
+- tail -f $HIVE_HOME/logs/hiveserver2.log to see the real-time logs.
 
 Start Hive CLI
 
@@ -144,3 +253,5 @@ You'll then need to create a Hive table that matches the schema of the log file.
 For example, a simplified table creation might look something like this (you'll need to refine the regex based on the exact log format, but this gives you an idea):
 
 
+
+!connect jdbc:hive2://localhost:10000/default
