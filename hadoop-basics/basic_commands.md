@@ -98,8 +98,8 @@ hdfs dfs -test -d <HDFS_directory_path>
 echo $?   # prints 0 if directory exists, 1 if it doesn’t
 ```
 
-- `0` -> condition is `true`
-- `1` -> condition is `false`
+- `0` - condition is `true`
+- `1` - condition is `false`
 
 Example:
 
