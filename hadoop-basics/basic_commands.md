@@ -95,7 +95,11 @@ Syntax:
 
 ```bash
 hdfs dfs -test -d <HDFS_directory_path>
+echo $?   # prints 0 if directory exists, 1 if it doesn’t
 ```
+
+- `0` -> condition is `true`
+- `1` -> condition is `false`
 
 Example:
 
@@ -103,6 +107,17 @@ Example:
 ## Check if "/user/hadoop/logs" exists.
 
 hdfs dfs -test -d /user/hadoop/logs
+echo $?
+```
+
+> **Note**: The above command will be usefull if you're writing a shell script like below:
+
+```sh
+if hdfs dfs -test -d /user/hadoop/logs; then
+  echo "Directory exists"
+else
+  echo "Directory does not exist"
+fi
 ```
 
 ### 1.6 View Directory Metadata
