@@ -110,7 +110,7 @@ hdfs dfs -test -d /user/hadoop/logs
 echo $?
 ```
 
-> **Note**: The above command will be usefull if you're writing a shell script like below:
+> **Note**: The above command will be useful if you're writing a shell script like below:
 
 ```sh
 if hdfs dfs -test -d /user/hadoop/logs; then
