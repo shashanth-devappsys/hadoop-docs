@@ -68,7 +68,7 @@ hdfs dfs -ls <HDFS_directory_path>
 Example:
 
 ```bash
-## List all files and sub-directories directly under "/user/hadoop"
+## List all files and subdirectories directly under "/user/hadoop"
 
 hdfs dfs -ls /user/hadoop/
 ```
@@ -98,8 +98,8 @@ hdfs dfs -test -d <HDFS_directory_path>
 echo $?   # prints 0 if directory exists, 1 if it doesn’t
 ```
 
-- `0` - condition is `true`
-- `1` - condition is `false`
+  - `0` - condition is `true`
+  - `1` - condition is `false`
 
 Example:
 
@@ -130,14 +130,14 @@ hdfs dfs -stat [format] <HDFS_directory_path>
 
 Common format options:
 
-- `%b` - Size of file in bytes
-- `%o` - Block size of file
-- `%r` - Replication factor
-- `%y` - Modification date
-- `%n` - File/directory name
-- `%F` - File type (file, directory, symlink)
-- `%u` - User name of owner
-- `%g` - Group name of owner
+  - `%b` - Size of file in bytes
+  - `%o` - Block size of file
+  - `%r` - Replication factor
+  - `%y` - Modification date
+  - `%n` - File/directory name
+  - `%F` - File type (file, directory, symlink)
+  - `%u` - User name of owner
+  - `%g` - Group name of owner
 
 Example:
 
@@ -209,7 +209,7 @@ Example:
 hdfs dfs -rm -r -skipTrash /user/hadoop/tmp
 ```
 
-> **Note**: The `-skipTrash` flag is only effective when you have `fs.trash.interval` is enabled in the `core-site.xml` file like below:
+> **Note**: The `-skipTrash` flag is only effective when `fs.trash.interval` is enabled in the `core-site.xml` file like below:
 
 ```xml
 <property>
@@ -225,7 +225,7 @@ hdfs dfs -rm -r -skipTrash /user/hadoop/tmp
 </property>
 ```
 
-If you don't have the above configuration, the both commands below would delete the files permanently from HDFS without moving them to `.Trash` path.
+If you don't have the above configuration, both commands below would delete the files permanently from HDFS without moving them to `.Trash` path.
 
 ```bash
 hdfs dfs -rm -r /user/hadoop/tmp
@@ -404,7 +404,7 @@ hdfs dfs -chown hduser:hduser /user/hadoop/data.txt
 hdfs dfs -chown hduser:hduser /user/hadoop/scripts
 ```
 
-> **Note**: If you use `-R` param with `-chown`, then it will be applied to its files and subdirectories.
+> **Note**: If you use the `-R` parameter with `-chown`, it will be applied to its files and subdirectories.
 
 ### 4.4 Change File or Directory Group Only
 
@@ -452,7 +452,7 @@ If you try to upload the same file from local to the HDFS file directory again, 
 
 > put: '/user/hadoop/localdata.txt': File exists
 
-To overwrite destination file, we can use `-copyFromLocal` flag.
+To overwrite the destination file, we can use the `-copyFromLocal` flag.
 
 Syntax:
 
@@ -486,11 +486,11 @@ hdfs dfs -get /user/hadoop/localdata.txt /home/hduser
 
 ### 5.4 Download a File and Overwrite Local Copy
 
-If you try to download a file from HDFS to the local directory and local path contains the file with same name, it will show an error like below:
+If you try to download a file from HDFS to the local directory and the local path contains a file with the same name, it will show an error like below:
 
 > get: '/home/hduser/localdata.txt': File exists
 
-To overwrite destination file, we can use `-copyToLocal` flag.
+To overwrite the destination file, we can use the `-copyToLocal` flag.
 
 Syntax:
 
