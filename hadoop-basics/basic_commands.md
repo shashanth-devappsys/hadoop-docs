@@ -352,12 +352,12 @@ hdfs dfs -stat /user/hadoop/data.txt
 
 ## 4. File Info and Permissions
 
-### 4.1 View Detailed File or Directory Information
+### 4.1 View Detailed File
 
 Syntax:
 
 ```bash
-hdfs dfs -ls -l <HDFS_path>
+hdfs dfs -ls <HDFS_file_path>
 ```
 
 Example:
@@ -365,7 +365,7 @@ Example:
 ```bash
 ## List the file "data.txt" with detailed information like permissions, owner, group, and file size etc.
 
-hdfs dfs -ls -l /user/hadoop/data.txt
+hdfs dfs -ls /user/hadoop/data.txt
 ```
 
 ### 4.2 Change File or Directory Permissions
@@ -398,7 +398,13 @@ Example:
 ## Change the owner of "data.txt" to user "hduser" and group "hduser"
 
 hdfs dfs -chown hduser:hduser /user/hadoop/data.txt
+
+## Change the owner of "scripts" to user "hduser" and group "hduser"
+
+hdfs dfs -chown hduser:hduser /user/hadoop/scripts
 ```
+
+> **Note**: If you use `-R` param with `-chown`, then it will be applied to its files and subdirectories.
 
 ### 4.4 Change File or Directory Group Only
 
@@ -414,6 +420,10 @@ Example:
 ## Change the group ownership of "data.txt" to "hduser"
 
 hdfs dfs -chgrp hduser /user/hadoop/data.txt
+
+## Change the group ownership of "scripts" to "hduser"
+
+hdfs dfs -chgrp hduser /user/hadoop/scripts
 ```
 
 -----
@@ -431,12 +441,18 @@ hdfs dfs -put <local_file_path> <HDFS_destination_path>
 Example:
 
 ```bash
-## Upload the local file "data.txt" from "/home/hduser/" to the HDFS directory "/user/hadoop/"
+## Upload the local file "localdata.txt" from "/home/hduser/" to the HDFS directory "/user/hadoop/"
 
-hdfs dfs -put /home/hduser/data.txt /user/hadoop/
+hdfs dfs -put /home/hduser/localdata.txt /user/hadoop/
 ```
 
 ### 5.2 Upload and Overwrite an Existing File in HDFS
+
+If you try to upload the same file from local to the HDFS file directory again, it will show an error like below:
+
+> put: '/user/hadoop/localdata.txt': File exists
+
+To overwrite destination file, we can use `-copyFromLocal` flag.
 
 Syntax:
 
@@ -447,9 +463,9 @@ hdfs dfs -copyFromLocal -f <local_file_path> <HDFS_destination_path>
 Example:
 
 ```bash
-## Copy the local file "data.txt" to HDFS and overwrites if a file with the same name already exists
+## Copy the local file "localdata.txt" to HDFS and overwrites if a file with the same name already exists
 
-hdfs dfs -copyFromLocal -f /home/hduser/data.txt /user/hadoop/
+hdfs dfs -copyFromLocal -f /home/hduser/localdata.txt /user/hadoop/
 ```
 
 ### 5.3 Download a File from HDFS to Local Filesystem
@@ -463,12 +479,18 @@ hdfs dfs -get <HDFS_file_path> <local_destination_path>
 Example:
 
 ```bash
-## Downloads the file "data.csv" from HDFS "/user/hadoop" to the local directory "/home/hduser/"
+## Downloads the file "localdata.txt" from HDFS "/user/hadoop" to the local directory "/home/hduser/"
 
-hdfs dfs -get /user/hadoop/data.csv /home/hduser
+hdfs dfs -get /user/hadoop/localdata.txt /home/hduser
 ```
 
 ### 5.4 Download a File and Overwrite Local Copy
+
+If you try to download a file from HDFS to the local directory and local path contains the file with same name, it will show an error like below:
+
+> get: '/home/hduser/localdata.txt': File exists
+
+To overwrite destination file, we can use `-copyToLocal` flag.
 
 Syntax:
 
@@ -481,5 +503,5 @@ Example:
 ```bash
 ## Copy the file from HDFS and overwrite the local file if it already exists
 
-hdfs dfs -copyToLocal -f /user/hadoop/data.csv /home/hduser/
+hdfs dfs -copyToLocal -f /user/hadoop/localdata.txt /home/hduser/
 ```
