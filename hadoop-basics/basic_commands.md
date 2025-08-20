@@ -209,6 +209,29 @@ Example:
 hdfs dfs -rm -r -skipTrash /user/hadoop/tmp
 ```
 
+> **Note**: The `-skipTrash` flag is only effective when you have `fs.trash.interval` is enabled in the `core-site.xml` file like below:
+
+```xml
+<property>
+  <name>fs.trash.interval</name>
+  <value>1440</value>
+  <description>Number of minutes trash is retained. 1440 = 1 day</description>
+</property>
+
+<property>
+  <name>fs.trash.checkpoint.interval</name>
+  <value>60</value>
+  <description>Interval (in minutes) between Trash checkpoints. Should be <= fs.trash.interval</description>
+</property>
+```
+
+If you don't have the above configuration, the both commands below would delete the files permanently from HDFS without moving them to `.Trash` path.
+
+```bash
+hdfs dfs -rm -r /user/hadoop/tmp
+hdfs dfs -rm -r -skipTrash /user/hadoop/tmp
+```
+
 ### 2.4 Move a File to Another Directory
 
 Syntax:
