@@ -125,15 +125,34 @@ fi
 Syntax:
 
 ```bash
-hdfs dfs -stat <HDFS_directory_path>
+hdfs dfs -stat [format] <HDFS_directory_path>
 ```
+
+Common format options:
+
+- `%b` - Size of file in bytes
+- `%o` - Block size of file
+- `%r` - Replication factor
+- `%y` - Modification date
+- `%n` - File/directory name
+- `%F` - File type (file, directory, symlink)
+- `%u` - User name of owner
+- `%g` - Group name of owner
 
 Example:
 
 ```bash
 ## Display size, modification time, and permission of the directory "/user/hadoop/logs"
 
-hdfs dfs -stat /user/hadoop/logs
+hdfs dfs -stat "%F %n %u %g %b bytes, %r replicas, block=%o, modified=%y" /user/hadoop/logs
+
+## Check size of a file
+
+hdfs dfs -stat %b /user/hadoop/file1.txt
+
+## Check file type
+
+hdfs dfs -stat %F /user/hadoop/file1.txt
 ```
 
 -----
